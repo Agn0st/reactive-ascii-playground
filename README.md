@@ -1,22 +1,40 @@
-# Reactive ASCII
+<h1 align="center">Reactive ASCII</h1>
 
-Interactive ASCII art on a grid that never moves.
+<p align="center">
+  <b>English</b> · <a href="README.uk.md">Українська</a>
+</p>
 
-**[▶ Open the live playground](https://agn0st.github.io/reactive-ascii-playground/demo/)** — drop in your own art and tune every parameter with sliders.
+<p align="center">
+  <strong>The art bends with your pointer. The grid stays put.</strong><br>
+  Paste in your own ASCII art, tune the effect with sliders, then share a link or copy the embed code.
+</p>
 
-[Українською](README.uk.md) · MIT · no dependencies, no build step
+<p align="center">
+  <img alt="Vanilla JavaScript" src="https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?style=flat-square&amp;logo=javascript&amp;logoColor=F7DF1E">
+  <a href="#quick-start"><img alt="HTML Embed" src="https://img.shields.io/badge/HTML%20Embed-E34F26?style=flat-square&amp;logo=html5&amp;logoColor=white"></a>
+  <img alt="No Build Step" src="https://img.shields.io/badge/No%20Build%20Step-475569?style=flat-square">
+  <img alt="Rendering via Canvas 2D" src="https://img.shields.io/badge/Rendering-Canvas%202D-2563EB?style=flat-square">
+  <img alt="Optional WebGL2 effects" src="https://img.shields.io/badge/WebGL2-Optional-7C3AED?style=flat-square&amp;logo=webgl&amp;logoColor=white">
+  <img alt="Custom ASCII input" src="https://img.shields.io/badge/Input-Custom%20ASCII-0E7490?style=flat-square">
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/License-MIT-6B7280?style=flat-square"></a>
+</p>
 
----
+<p align="center">
+  <a href="https://agn0st.github.io/reactive-ascii-playground/demo/"><img alt="Open the playground" src="https://shieldcn.dev/badge/Live%20demo-Playground-CB3837.svg?size=sm"></a>
+</p>
 
-Every cell keeps its position for good. What changes is where the cell *reads
-from*: it draws the glyph it finds at a shifted spot in the source art. Features
-stretch under the pointer and settle back, but no glyph ever travels — the grid
-stays rigid while the image appears to flow.
+<p align="center">
+  <a href="#quick-start">Quick start</a> · <a href="#your-own-art">Use your own art</a> · <a href="#options">Options</a> · <a href="#api">API</a> · <a href="#how-it-works">How it works</a>
+</p>
 
-On top of that: a random trail that lands mostly in empty cells, cycles through
-characters and fades out, and an optional chromatic aberration pass on WebGL2.
-Displacement is hard-capped, and old strokes decay every frame — so circling the
-cursor forever never winds the deformation up.
+<p align="center">
+  <a href="https://agn0st.github.io/reactive-ascii-playground/demo/"><img src="demo/preview.gif" width="765" alt="An ASCII portrait stretches under the pointer and settles back into place"></a>
+</p>
+
+> [!NOTE]
+> Each cell samples a shifted spot in the original art. Moving the pointer stretches the image and leaves a fading trail of glyphs. An optional WebGL2 pass splits the color channels along the direction of the stretch.
+
+<br>
 
 ## Quick start
 
@@ -37,7 +55,7 @@ cursor forever never winds the deformation up.
 </script>
 ```
 
-**3.** Set the canvas `background` to the same colour as whatever sits behind it.
+**3.** If you change the background, use the same colour in CSS and in the `background` option.
 The shader needs it to composite the split colour channels without darkening edges.
 
 That is the whole integration. `chromatic.js` is optional — leave it out and the
@@ -49,7 +67,7 @@ deformation and trail still run on plain Canvas 2D.
 <canvas data-reactive-ascii data-art="#ascii-art" data-radius="100" data-trail="0.8"></canvas>
 ```
 
-Any option below works as a `data-` attribute.
+The library finds the canvas through `data-reactive-ascii`. In the example above, replace the `<canvas>` with this version and remove the `ReactiveAscii.create()` call. Keep the canvas sizing, art element and library script. Use hyphens for multiword options, such as `data-trail-duration`. Set `respectReducedMotion` through JavaScript.
 
 ## Your own art
 
@@ -109,45 +127,22 @@ ReactiveAscii.defaults;            // the table above, as an object
 
 ## How it works
 
-**The grid never moves.** Each cell stores its own position and an offset
-`dx, dy`. On every frame it draws `sourceChar(ax - dx/cellWidth, ay - dy/cellHeight)`
-— the glyph from a shifted spot in the original. Moving the *sampling point*
-instead of the glyph is what keeps the grid rigid while the portrait stretches.
-
-**Two-stage spring.** The pointer position is smoothed first, so there is
-inertia; the delta of that smoothed position drives the pull. Cells chase their
-target fast while they are "hot" (touched in the last 110 ms) and slowly
-afterwards — a sharp yank, a soft return.
-
-**Bounded by construction.** Displacement is clamped three times per frame, and
-targets decay by `exp(-dt·3/memory)` unconditionally. Because the decay hits the
-*target* that the pointer accumulates into, continuous motion cannot run away.
-
-**The trail** is emitted during the drag, not during the draw. An empty cell is
-18× more likely to receive a glyph than an occupied one, each deposit gets its
-own randomised lifetime, and as its glyph fades the cell's original character
-cross-fades back in — so the portrait returns rather than blinking.
-
-**Aberration** samples red at `-ab`, green at centre, blue at `+ab` along the
-local displacement direction, with five taps for a directional smear. The
-displacement field reaches the shader as an RGBA texture, one texel per cell.
+<table>
+  <tr>
+    <td width="50%" valign="top"><h3>▦ Fixed grid</h3><p>Each cell draws a glyph from a shifted spot in the source. The image stretches while the cells stay in place.</p></td>
+    <td width="50%" valign="top"><h3>🌀 Spring motion</h3><p>Smoothed pointer movement pulls the art. Displacement is capped and decays even while the pointer keeps moving.</p></td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top"><h3>✨ Fading glyph trail</h3><p>Trail glyphs land mostly in empty cells. As the trail fades, the original glyphs come back into view.</p></td>
+    <td width="50%" valign="top"><h3>🌈 RGB split</h3><p>An optional WebGL2 pass shifts the red and blue channels in opposite directions along the local displacement.</p></td>
+  </tr>
+</table>
 
 ## Browser support
 
 Modern browsers. WebGL2 is needed only for the aberration — without it the
 slider is disabled and everything else works. `prefers-reduced-motion` holds the
 effect still.
-
-## Publishing your own copy
-
-The repository root is the library; the playground lives in `demo/`.
-
-1. **Settings → Pages → Deploy from a branch → `main` / `/ (root)` → Save.**
-   Serving the root is what lets `demo/` reach `../reactive-ascii.js`.
-2. Wait a minute, then open `https://<user>.github.io/<repo>/`. The root
-   `index.html` redirects to the demo.
-3. On the repository page, click the gear next to **About** and tick
-   **Use your GitHub Pages website** — that puts the link in the right-hand column.
 
 ## Layout
 
@@ -157,11 +152,6 @@ chromatic.js        optional WebGL2 aberration pass
 index.html          redirect to the demo, so the Pages root resolves
 demo/               the playground: sliders, palettes, art loading, embed export
 ```
-
-## Credits
-
-The chromatic coverage sampling is adapted from [Agn0st/portfolio](https://github.com/Agn0st/portfolio),
-`js/liquid-heading.js`.
 
 ## License
 
