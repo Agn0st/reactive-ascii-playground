@@ -1,7 +1,7 @@
 <h1 align="center">Reactive ASCII</h1>
 
 <p align="center">
-  <a href="README.md">English</a> · <b>Українська</b>
+  <a href="README.md">English</a> · <b>Українська</b> · <a href="README.es.md">Español</a>
 </p>
 
 <p align="center">
