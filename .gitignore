@@ -1,4 +1,7 @@
 .claude/
 .DS_Store
-README.md
-.nojekyll
+.release/reactive-ascii.js
+.release/reactive-ascii-playground-v0.8.zip
+.release/LICENSE
+.release/chromatic.js
+.release/README.md

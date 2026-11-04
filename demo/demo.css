@@ -89,7 +89,9 @@ h1{font-size:var(--t-display);font-weight:400;line-height:.98;letter-spacing:-.0
 .stage-samples button{background:none;border:0;padding:0;min-height:24px;display:inline-flex;align-items:center;
   font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;opacity:.6}
 .stage-samples button:hover{opacity:1}
-.stage-samples button[aria-pressed=true]{opacity:1;text-decoration:underline;text-underline-offset:5px}
+/* The active sample is a state, not an action — clicking it reloads the same
+ * art and nothing visibly happens, so it must not look clickable. */
+.stage-samples button[aria-pressed=true]{opacity:1;text-decoration:underline;text-underline-offset:5px;cursor:default}
 .stage.dropping{border-color:#d3ff64}
 .stage.dropping::after{content:'Drop a .txt file';position:absolute;inset:0;display:grid;place-items:center;
   font:var(--t-sm)/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#d3ff64;background:rgba(10,12,10,.6);pointer-events:none}
